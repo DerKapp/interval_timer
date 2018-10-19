@@ -35,11 +35,22 @@ class TimeInputState extends State<TimeInput> {
       return Stack(
         children: <Widget>[
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 400.0, maxWidth: MediaQuery.of(context).size.width),
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery
+                    .of(context)
+                    .size
+                    .height, maxWidth: MediaQuery
+                .of(context)
+                .size
+                .width),
             child: Column(
               children: <Widget>[
-                Expanded(flex: 1, child: TimeLabel(_duration, _deleteDigit)),
-                Expanded(flex: 4, child: NumPad(_numPadClick))
+                Expanded(flex: 2, child: TimeLabel(_duration, _deleteDigit)),
+                Expanded(flex: 4, child: NumPad(_numPadClick)),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(),
+                )
               ],
             ),
           ),
@@ -47,7 +58,7 @@ class TimeInputState extends State<TimeInput> {
               alignment: Alignment.bottomCenter,
               child: Container(
                 margin: EdgeInsets.all(10.0),
-                child: FloatingActionButton(child: Icon(Icons.navigate_next), onPressed: () => _onDoneClick()),
+                child: _buildNextButton(),
               )),
         ],
       );
@@ -57,13 +68,24 @@ class TimeInputState extends State<TimeInput> {
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height, maxWidth: MediaQuery.of(context).size.width),
         child: Row(
           children: <Widget>[
-            Expanded(flex: 2, child: TimeLabel(_duration, _deleteDigit)),
+            Expanded(
+                flex: 2,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(child: TimeLabel(_duration, _deleteDigit)),
+                    _buildNextButton()
+                  ],
+                )
+            ),
             Expanded(flex: 2, child: NumPad(_numPadClick))
           ],
         ),
       );
     }
   }
+
+  FloatingActionButton _buildNextButton() =>
+      FloatingActionButton(child: Icon(Icons.navigate_next), onPressed: () => _onDoneClick());
 
   void _numPadClick(int number) {
     setState(() {

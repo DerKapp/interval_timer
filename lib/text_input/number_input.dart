@@ -30,14 +30,26 @@ class NumberInputState extends State<NumberInput> {
       return Stack(
         children: <Widget>[
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 400.0, maxWidth: MediaQuery.of(context).size.width),
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery
+                    .of(context)
+                    .size
+                    .height, maxWidth: MediaQuery
+                .of(context)
+                .size
+                .width),
             child: Column(
               children: <Widget>[
                 Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Column(
                       children: <Widget>[
-                        Text(_number.toString(), style: Theme.of(context).textTheme.display3),
+                        Expanded(
+                            child:
+                            Center(child: Text(_number.toString(), style: Theme
+                                .of(context)
+                                .textTheme
+                                .display3))),
                         SizedBox(
                             height: 4.0,
                             child: Center(
@@ -49,7 +61,11 @@ class NumberInputState extends State<NumberInput> {
                             ))
                       ],
                     )),
-                Expanded(flex: 4, child: NumPad(_numPadClick))
+                Expanded(flex: 4, child: NumPad(_numPadClick)),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(),
+                )
               ],
             ),
           ),
@@ -57,7 +73,7 @@ class NumberInputState extends State<NumberInput> {
               alignment: Alignment.bottomCenter,
               child: Container(
                 margin: EdgeInsets.all(10.0),
-                child: FloatingActionButton(child: Icon(Icons.navigate_next), onPressed: () => _onDoneClick()),
+                child: _buildDoneButton(),
               )),
         ],
       );
@@ -67,13 +83,26 @@ class NumberInputState extends State<NumberInput> {
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height, maxWidth: MediaQuery.of(context).size.width),
         child: Row(
           children: <Widget>[
-            Expanded(flex: 2, child: Text(_number.toString(), style: Theme.of(context).textTheme.display3)),
+            Expanded(
+                flex: 2,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(child: Center(child: Text(_number.toString(), style: Theme
+                        .of(context)
+                        .textTheme
+                        .display3))),
+                    _buildDoneButton()
+                  ],
+                )),
             Expanded(flex: 2, child: NumPad(_numPadClick))
           ],
         ),
       );
     }
   }
+
+  FloatingActionButton _buildDoneButton() =>
+      FloatingActionButton(child: Icon(Icons.done), onPressed: () => _onDoneClick());
 
   void _numPadClick(int number) {
     setState(() {

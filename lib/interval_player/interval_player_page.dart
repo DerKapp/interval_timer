@@ -1,8 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:interval_timer/interval_player/timer_painter.dart';
 import 'package:interval_timer/text_input/time_label.dart';
 import 'package:interval_timer/text_input/work_time_input_page.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum DurationState { warmUp, work, pause }
 
@@ -23,6 +29,11 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
   AnimationController controller;
 
   DurationState _durationState = DurationState.warmUp;
+
+  String _pauseFilePath;
+  String _workFilePath;
+
+  AudioPlayer audioPlayer = new AudioPlayer();
 
   String get _durationTitle {
     switch (_durationState) {
@@ -47,32 +58,60 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
 
   @override
   void initState() {
+    _loadFile();
+
     controller = AnimationController(vsync: this, duration: _getReadyDuration, value: 1.0);
 
-    controller.addListener(() {
-      if (controller.value == 0 && _cycleCount < _cycleLimit) {
-        switch (_durationState) {
-          case DurationState.warmUp:
-            _durationState = DurationState.work;
-            controller.duration = _workDuration;
-            _cycleCount++;
-            break;
-          case DurationState.work:
-            _durationState = DurationState.pause;
-            controller.duration = _pauseDuration;
-            break;
-          case DurationState.pause:
-            _durationState = DurationState.work;
-            controller.duration = _getReadyDuration;
-            _cycleCount++;
-            break;
-        }
-        SystemSound.play(SystemSoundType.click);
-        controller.reverse(from: 1.0);
-      }
-    });
+    controller.addListener(_stateChange);
 
     super.initState();
+  }
+
+  void _stateChange() {
+    if (controller.value == 0 && _cycleCount < _cycleLimit) {
+      switch (_durationState) {
+        case DurationState.warmUp:
+          audioPlayer.play(_workFilePath, isLocal: true);
+          _durationState = DurationState.work;
+          controller.duration = _workDuration;
+          _cycleCount++;
+          break;
+        case DurationState.work:
+          audioPlayer.play(_pauseFilePath, isLocal: true);
+          _durationState = DurationState.pause;
+          controller.duration = _pauseDuration;
+          break;
+        case DurationState.pause:
+          audioPlayer.play(_workFilePath, isLocal: true);
+          _durationState = DurationState.work;
+          controller.duration = _getReadyDuration;
+          _cycleCount++;
+          break;
+      }
+
+      controller.reverse(from: 1.0);
+    }
+  }
+
+  Future _loadFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final lvlUpFile = new File('${dir.path}/pauseaudio.mp3');
+    final nowGoFile = new File('${dir.path}/workaudio.mp3');
+
+    var lvlUpBytes = await rootBundle.load('assets/sound/pause.mp3');
+    var nowGoBytes = await rootBundle.load('assets/sound/work.mp3');
+
+    final lvlUpBuffer = lvlUpBytes.buffer;
+    final nowGoBuffer = nowGoBytes.buffer;
+    await lvlUpFile.writeAsBytes(lvlUpBuffer.asUint8List(lvlUpBytes.offsetInBytes, lvlUpBytes.lengthInBytes));
+    await nowGoFile.writeAsBytes(nowGoBuffer.asUint8List(nowGoBytes.offsetInBytes, nowGoBytes.lengthInBytes));
+
+    if (await lvlUpFile.exists() && await nowGoFile.exists()) {
+      _pauseFilePath = lvlUpFile.path;
+      _workFilePath = nowGoFile.path;
+    } else {
+      print('file not exists');
+    }
   }
 
   @override
@@ -106,9 +145,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
         heroTag: 10,
         child: Icon(Icons.pause),
         onPressed: () {
-          controller.stop();
-          // this is used to rerender all after stop
-          setState(() {});
+          setState(() => controller.stop());
         },
       );
     } else {
@@ -122,7 +159,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => WorkTimeInputPage(_workDuration, _pauseDuration)),
-                  (Route<dynamic> route) => false);
+                      (Route<dynamic> route) => false);
             },
           ),
           FloatingActionButton(
@@ -151,10 +188,10 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
                   builder: (BuildContext context, Widget child) {
                     return new CustomPaint(
                         painter: TimerPainter(
-                      animation: controller,
-                      backgroundColor: Colors.white,
-                      color: Colors.deepOrangeAccent,
-                    ));
+                          animation: controller,
+                          backgroundColor: Colors.white,
+                          color: Colors.deepOrangeAccent,
+                        ));
                   },
                 ),
               ),

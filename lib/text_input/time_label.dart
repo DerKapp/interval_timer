@@ -15,9 +15,11 @@ class TimeLabel extends StatelessWidget {
     if (_deleteDigit != null) {
       return Column(
         children: <Widget>[
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[_buildTimeRow(), _buildIconButton(context)]),
+          Expanded(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[_buildTimeRow(), _buildIconButton(context)]),
+          ),
           SizedBox(
               height: 4.0,
               child: Center(
