@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:interval_timer/bloc/bloc_provider.dart';
 import 'package:interval_timer/text_input/work_time_input_page.dart';
+
+import 'bloc/time_bloc.dart';
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: _buildThemeData(),
-      home: WorkTimeInputPage(),
+    return BlocProvider<TimeBloc>(
+      bloc: TimeBloc(),
+      child: MaterialApp(
+        theme: _buildThemeData(),
+        home: WorkTimeInputPage(),
+      ),
     );
   }
 

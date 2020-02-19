@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:interval_timer/bloc/bloc_provider.dart';
+import 'package:interval_timer/bloc/time_bloc.dart';
 import 'package:interval_timer/interval_player/timer_painter.dart';
 import 'package:interval_timer/text_input/time_label.dart';
 import 'package:interval_timer/text_input/work_time_input_page.dart';
@@ -12,22 +14,19 @@ import 'package:path_provider/path_provider.dart';
 enum DurationState { warmUp, work, pause, finished }
 
 class IntervalPlayerPage extends StatefulWidget {
-  final Duration _workDuration;
-  final Duration _pauseDuration;
-  final int _cycleLimit;
-
-  IntervalPlayerPage(this._cycleLimit, this._workDuration, this._pauseDuration);
-
   @override
   State<StatefulWidget> createState() {
     return IntervalPlayerPageState();
   }
 }
 
-class IntervalPlayerPageState extends State<IntervalPlayerPage>
-    with TickerProviderStateMixin {
-  AnimationController controller;
+class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProviderStateMixin {
+  static const Duration _READY_DURATION = Duration(seconds: 5);
+  TimeBloc _timeBloc;
 
+  int _roundCount = 0;
+
+  AnimationController controller;
   DurationState _durationState = DurationState.warmUp;
 
   String _pauseFilePath;
@@ -50,45 +49,40 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
     }
   }
 
-  Duration _getReadyDuration = Duration(seconds: 5);
-  int _cycleCount = 0;
-
   @override
   void initState() {
     _loadFile();
-    controller =
-        AnimationController(vsync: this, duration: _getReadyDuration, value: 0);
+    controller = AnimationController(vsync: this, duration: _READY_DURATION, value: 0);
     controller.addListener(_stateChange);
 
     super.initState();
   }
 
   void _stateChange() {
-    print(controller.value);
-    if (controller.value == 0 && _cycleCount < widget._cycleLimit) {
+    if (controller.value == 0 && _roundCount < _timeBloc.rounds.value) {
       switch (_durationState) {
         case DurationState.warmUp:
           audioPlayer.play(_workFilePath, isLocal: true);
           _durationState = DurationState.work;
-          controller.duration = widget._workDuration;
-          _cycleCount++;
+          controller.duration = _timeBloc.workTime.value;
+          _roundCount++;
           break;
         case DurationState.work:
           audioPlayer.play(_pauseFilePath, isLocal: true);
           _durationState = DurationState.pause;
-          controller.duration = widget._pauseDuration;
+          controller.duration = _timeBloc.pauseTime.value;
           break;
         case DurationState.pause:
           audioPlayer.play(_workFilePath, isLocal: true);
           _durationState = DurationState.work;
-          controller.duration = widget._workDuration;
-          _cycleCount++;
+          controller.duration = _timeBloc.workTime.value;
+          _roundCount++;
           break;
         default:
       }
 
       controller.reverse(from: 1.0);
-    } else if (controller.value == 0 && _cycleCount == widget._cycleLimit) {
+    } else if (controller.value == 0 && _roundCount == _timeBloc.rounds.value) {
       _durationState = DurationState.finished;
     }
   }
@@ -103,10 +97,8 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
 
     final lvlUpBuffer = lvlUpBytes.buffer;
     final nowGoBuffer = nowGoBytes.buffer;
-    await lvlUpFile.writeAsBytes(lvlUpBuffer.asUint8List(
-        lvlUpBytes.offsetInBytes, lvlUpBytes.lengthInBytes));
-    await nowGoFile.writeAsBytes(nowGoBuffer.asUint8List(
-        nowGoBytes.offsetInBytes, nowGoBytes.lengthInBytes));
+    await lvlUpFile.writeAsBytes(lvlUpBuffer.asUint8List(lvlUpBytes.offsetInBytes, lvlUpBytes.lengthInBytes));
+    await nowGoFile.writeAsBytes(nowGoBuffer.asUint8List(nowGoBytes.offsetInBytes, nowGoBytes.lengthInBytes));
 
     if (await lvlUpFile.exists() && await nowGoFile.exists()) {
       _pauseFilePath = lvlUpFile.path;
@@ -118,6 +110,9 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
 
   @override
   Widget build(BuildContext context) {
+    print('build -> interval player page');
+    _timeBloc = BlocProvider.of<TimeBloc>(context);
+
     ThemeData themeData = Theme.of(context);
 
     return Scaffold(
@@ -180,8 +175,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
             onPressed: () => Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => WorkTimeInputPage(
-                      widget._workDuration, widget._pauseDuration),
+                  builder: (_) => WorkTimeInputPage(),
                 ),
                 (_) => false),
             child: Icon(
@@ -191,8 +185,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
           ),
           FlatButton(
             shape: CircleBorder(),
-            onPressed: () => controller.reverse(
-                from: controller.value == 0.0 ? 1.0 : controller.value),
+            onPressed: () => controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value),
             child: Icon(
               Icons.play_arrow,
               size: 50,
@@ -251,8 +244,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TimeLabel(controller.duration * controller.value),
-          Text('Round $_cycleCount of ${widget._cycleLimit}',
-              style: themeData.textTheme.display1),
+          Text('Round $_roundCount of ${_timeBloc.rounds.value}', style: themeData.textTheme.display1),
         ],
       );
     }

@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/text_input/cycle_input_page.dart';
+import 'package:interval_timer/bloc/bloc_provider.dart';
+import 'package:interval_timer/bloc/time_bloc.dart';
+import 'package:interval_timer/text_input/rounds_input_page.dart';
 import 'package:interval_timer/text_input/time_input.dart';
 
-class PauseTimeInputPage extends StatefulWidget {
-  final Duration _workDuration;
-  Duration _pauseDuration;
-
-  PauseTimeInputPage(this._workDuration, this._pauseDuration);
-
-  @override
-  State<StatefulWidget> createState() {
-    return PauseTimeInputPageState();
-  }
-}
-
-class PauseTimeInputPageState extends State<PauseTimeInputPage> {
+class PauseTimeInputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('build -> pause time input page');
+    TimeBloc timeBloc = BlocProvider.of<TimeBloc>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -33,7 +26,7 @@ class PauseTimeInputPageState extends State<PauseTimeInputPage> {
             ),
             Expanded(
               flex: 4,
-              child: TimeInput(_setDuration, widget._pauseDuration),
+              child: TimeInput(timeBloc.setPauseTime, timeBloc.pauseTime.value),
             ),
             Expanded(
               flex: 1,
@@ -51,7 +44,12 @@ class PauseTimeInputPageState extends State<PauseTimeInputPage> {
                   ),
                   FlatButton(
                     shape: CircleBorder(),
-                    onPressed: () => _done(),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RoundsInputPage(),
+                      ),
+                    ),
                     child: Icon(
                       Icons.done,
                       size: 50,
@@ -63,18 +61,6 @@ class PauseTimeInputPageState extends State<PauseTimeInputPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void _setDuration(Duration newDuration) =>
-      widget._pauseDuration = newDuration;
-
-  void _done() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              CycleInputPage(1, widget._workDuration, widget._pauseDuration)),
     );
   }
 }

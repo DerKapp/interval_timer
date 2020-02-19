@@ -55,8 +55,7 @@ class TimeInputState extends State<TimeInput> {
       seconds = seconds % 100;
       minutes = minutes % 100;
 
-      widget._duration =
-          Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
+      widget._duration = Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
       widget._setDuration(widget._duration);
     });
   }
@@ -72,8 +71,7 @@ class TimeInputState extends State<TimeInput> {
       minutes = minutes / 10;
       minutes = minutes.truncateToDouble();
 
-      widget._duration =
-          Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
+      widget._duration = Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
       widget._setDuration(widget._duration);
     });
   }

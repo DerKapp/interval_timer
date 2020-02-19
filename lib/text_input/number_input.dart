@@ -29,9 +29,8 @@ class NumberInputState extends State<NumberInput> {
       );
     } else {
       return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height,
-            maxWidth: MediaQuery.of(context).size.width),
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.of(context).size.height, maxWidth: MediaQuery.of(context).size.width),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -40,8 +39,7 @@ class NumberInputState extends State<NumberInput> {
                   children: <Widget>[
                     Expanded(
                       child: Center(
-                        child: Text(widget._number.toString(),
-                            style: Theme.of(context).textTheme.display3),
+                        child: Text(widget._number.toString(), style: Theme.of(context).textTheme.display3),
                       ),
                     ),
                   ],
@@ -56,10 +54,7 @@ class NumberInputState extends State<NumberInput> {
   Column buildCycleLabel(BuildContext context) {
     return Column(
       children: <Widget>[
-        Expanded(
-            child: Center(
-                child: Text(widget._number.toString(),
-                    style: Theme.of(context).textTheme.display3))),
+        Expanded(child: Center(child: Text(widget._number.toString(), style: Theme.of(context).textTheme.display3))),
         SizedBox(
             height: 4.0,
             child: Center(

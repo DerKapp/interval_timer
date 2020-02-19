@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:interval_timer/bloc/bloc_provider.dart';
+import 'package:interval_timer/bloc/time_bloc.dart';
 import 'package:interval_timer/interval_player/interval_player_page.dart';
 import 'package:interval_timer/text_input/number_input.dart';
 
-class CycleInputPage extends StatefulWidget {
-  final int _cycles;
-  final Duration _workDuration;
-  final Duration _pauseDuration;
-
-  CycleInputPage(this._cycles, this._workDuration, this._pauseDuration);
-
-  @override
-  State<StatefulWidget> createState() =>
-      CycleInputPageState(_cycles, _workDuration, _pauseDuration);
-}
-
-class CycleInputPageState extends State<CycleInputPage> {
-  final Duration _workDuration;
-  final Duration _pauseDuration;
-  int _cycles;
-
-  CycleInputPageState(this._cycles, this._workDuration, this._pauseDuration);
-
+class RoundsInputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('build -> rounds input page');
+    TimeBloc timeBloc = BlocProvider.of<TimeBloc>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -39,7 +26,7 @@ class CycleInputPageState extends State<CycleInputPage> {
             ),
             Expanded(
               flex: 4,
-              child: NumberInput(_cycles, _setNumber),
+              child: NumberInput(timeBloc.rounds.value, timeBloc.setRounds),
             ),
             Expanded(
               flex: 1,
@@ -57,7 +44,13 @@ class CycleInputPageState extends State<CycleInputPage> {
                   ),
                   FlatButton(
                     shape: CircleBorder(),
-                    onPressed: () => _onDoneClick(),
+                    onPressed: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IntervalPlayerPage(),
+                      ),
+                      (_) => false,
+                    ),
                     child: Icon(
                       Icons.done,
                       size: 50,
@@ -71,16 +64,4 @@ class CycleInputPageState extends State<CycleInputPage> {
       ),
     );
   }
-
-  void _onDoneClick() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              IntervalPlayerPage(_cycles, _workDuration, _pauseDuration)),
-      (Route<dynamic> route) => false,
-    );
-  }
-
-  void _setNumber(int number) => _cycles = number;
 }
