@@ -114,43 +114,76 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
     _timeBloc = BlocProvider.of<TimeBloc>(context);
 
     ThemeData themeData = Theme.of(context);
+    Orientation orientation = MediaQuery.of(context).orientation;
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(40),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: AnimatedBuilder(
-                  animation: controller,
-                  builder: (_, __) => Row(
-                    verticalDirection: VerticalDirection.down,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _durationTitle,
-                        style: themeData.textTheme.display1,
+          child: orientation == Orientation.portrait
+              ? Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: getTextContent(themeData),
+                    ),
+                    Expanded(
+                      flex: 6,
+                      child: buildTimer(themeData),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: getButtonsContent(),
+                    )
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: buildTimer(themeData),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: getTextContent(themeData),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: getButtonsContent(),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              ),
-              Expanded(
-                flex: 6,
-                child: buildTimer(themeData),
-              ),
-              Expanded(
-                flex: 2,
-                child: AnimatedBuilder(
-                  animation: controller,
-                  builder: (_, __) => buildButtons(),
-                ),
-              )
-            ],
-          ),
         ),
+      ),
+    );
+  }
+
+  AnimatedBuilder getButtonsContent() {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (_, __) => buildButtons(),
+    );
+  }
+
+  AnimatedBuilder getTextContent(ThemeData themeData) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (_, __) => Row(
+        verticalDirection: VerticalDirection.down,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            _durationTitle,
+            style: themeData.textTheme.display1,
+          ),
+        ],
       ),
     );
   }
