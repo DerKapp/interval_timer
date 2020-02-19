@@ -9,7 +9,7 @@ import 'package:interval_timer/text_input/time_label.dart';
 import 'package:interval_timer/text_input/work_time_input_page.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum DurationState { warmUp, work, pause }
+enum DurationState { warmUp, work, pause, finished }
 
 class IntervalPlayerPage extends StatefulWidget {
   final Duration _workDuration;
@@ -43,6 +43,8 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
         return 'Work It!';
       case DurationState.pause:
         return 'Rest';
+      case DurationState.finished:
+        return 'Well Done!';
       default:
         return 'Unknown State';
     }
@@ -79,12 +81,15 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
         case DurationState.pause:
           audioPlayer.play(_workFilePath, isLocal: true);
           _durationState = DurationState.work;
-          controller.duration = _getReadyDuration;
+          controller.duration = widget._workDuration;
           _cycleCount++;
           break;
+        default:
       }
 
       controller.reverse(from: 1.0);
+    } else if (controller.value == 0 && _cycleCount == widget._cycleLimit) {
+      _durationState = DurationState.finished;
     }
   }
 
@@ -118,7 +123,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(40),
           child: Column(
             children: <Widget>[
               Expanded(
@@ -212,8 +217,8 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage>
                   return new CustomPaint(
                     painter: TimerPainter(
                       animation: controller,
-                      backgroundColor: Colors.white,
-                      color: Colors.deepOrangeAccent,
+                      backgroundColor: themeData.primaryColor,
+                      color: _durationState == DurationState.work ? themeData.accentColor : themeData.canvasColor,
                     ),
                   );
                 },

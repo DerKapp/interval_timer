@@ -27,7 +27,7 @@ class TimeLabel extends StatelessWidget {
                 child: Container(
                   margin: EdgeInsetsDirectional.only(start: 10.0, end: 10.0),
                   height: 2.0,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).primaryColor,
                 ),
               ))
         ],

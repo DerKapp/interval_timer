@@ -13,15 +13,16 @@ class MyApp extends StatelessWidget {
   ThemeData _buildThemeData() {
     final ThemeData base = ThemeData.dark();
     return base.copyWith(
-      accentColor: Colors.white70,
-      canvasColor: Colors.blueGrey,
+      accentColor: Color(0xFFE63462),
+      primaryColor: Color(0xFFEFEFEF),
+      canvasColor: Color(0xFF3F51B5),
       textTheme: base.textTheme.copyWith(
         title: base.textTheme.title.copyWith(fontSize: 30),
-        display1: base.textTheme.display1.copyWith(color: Colors.white),
-        display3: base.textTheme.display1.copyWith(color: Colors.white),
+        display1: base.textTheme.display1.copyWith(color: Color(0xFFEFEFEF)),
+        display3: base.textTheme.display1.copyWith(color: Color(0xFFEFEFEF)),
       ),
       iconTheme: base.iconTheme.copyWith(
-        color: Colors.white,
+        color: Color(0xFFEFEFEF),
       ),
     );
   }
