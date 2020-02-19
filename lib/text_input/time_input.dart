@@ -7,90 +7,46 @@ typedef void OnDoneClick();
 
 class TimeInput extends StatefulWidget {
   final SetDuration _setDuration;
-  final OnDoneClick _onDoneClick;
-  final Duration _duration;
+  Duration _duration;
 
-  TimeInput(this._setDuration, this._duration, this._onDoneClick);
+  TimeInput(this._setDuration, this._duration);
 
   @override
   State<StatefulWidget> createState() {
-    return TimeInputState(this._setDuration, this._duration, this._onDoneClick);
+    return TimeInputState();
   }
 }
 
 class TimeInputState extends State<TimeInput> {
-  Duration _duration;
-
-  final SetDuration _setDuration;
-  final OnDoneClick _onDoneClick;
-
-  TimeInputState(this._setDuration, this._duration, this._onDoneClick);
-
   @override
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
 
     if (orientation == Orientation.portrait) {
       // todo check if media heigth is under 450, then place button bottom right
-      return Stack(
+      return Column(
         children: <Widget>[
-          ConstrainedBox(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery
-                    .of(context)
-                    .size
-                    .height, maxWidth: MediaQuery
-                .of(context)
-                .size
-                .width),
-            child: Column(
-              children: <Widget>[
-                Expanded(flex: 2, child: TimeLabel(_duration, _deleteDigit)),
-                Expanded(flex: 4, child: NumPad(_numPadClick)),
-                Expanded(
-                  flex: 1,
-                  child: SizedBox(),
-                )
-              ],
-            ),
-          ),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: EdgeInsets.all(10.0),
-                child: _buildNextButton(),
-              )),
+          Expanded(flex: 2, child: TimeLabel(widget._duration, _deleteDigit)),
+          Expanded(flex: 1, child: SizedBox()),
+          Expanded(flex: 6, child: NumPad(_numPadClick)),
         ],
       );
     } else {
-      return ConstrainedBox(
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.of(context).size.height, maxWidth: MediaQuery.of(context).size.width),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-                flex: 2,
-                child: Column(
-                  children: <Widget>[
-                    Expanded(child: TimeLabel(_duration, _deleteDigit)),
-                    _buildNextButton()
-                  ],
-                )
-            ),
-            Expanded(flex: 2, child: NumPad(_numPadClick))
-          ],
-        ),
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          TimeLabel(widget._duration, _deleteDigit),
+          NumPad(_numPadClick),
+        ],
       );
     }
   }
 
-  FloatingActionButton _buildNextButton() =>
-      FloatingActionButton(child: Icon(Icons.navigate_next), onPressed: () => _onDoneClick());
-
   void _numPadClick(int number) {
     setState(() {
-      double seconds = (_duration.inSeconds % 60).truncateToDouble();
-      double minutes = _duration.inMinutes.truncateToDouble();
+      double seconds = (widget._duration.inSeconds % 60).truncateToDouble();
+      double minutes = widget._duration.inMinutes.truncateToDouble();
 
       seconds = seconds * 10;
       seconds = seconds + number;
@@ -99,15 +55,16 @@ class TimeInputState extends State<TimeInput> {
       seconds = seconds % 100;
       minutes = minutes % 100;
 
-      _duration = Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
-      _setDuration(_duration);
+      widget._duration =
+          Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
+      widget._setDuration(widget._duration);
     });
   }
 
   void _deleteDigit() {
     setState(() {
-      double seconds = (_duration.inSeconds % 60).truncateToDouble();
-      double minutes = _duration.inMinutes.truncateToDouble();
+      double seconds = (widget._duration.inSeconds % 60).truncateToDouble();
+      double minutes = widget._duration.inMinutes.truncateToDouble();
 
       seconds = seconds / 10;
       seconds = seconds + (minutes % 10) * 10;
@@ -115,8 +72,9 @@ class TimeInputState extends State<TimeInput> {
       minutes = minutes / 10;
       minutes = minutes.truncateToDouble();
 
-      _duration = Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
-      _setDuration(_duration);
+      widget._duration =
+          Duration(minutes: minutes.toInt(), seconds: seconds.toInt());
+      widget._setDuration(widget._duration);
     });
   }
 }

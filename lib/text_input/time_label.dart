@@ -17,8 +17,9 @@ class TimeLabel extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[_buildTimeRow(), _buildIconButton(context)]),
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [_buildTimeRow(), _buildIconButton(context)]),
           ),
           SizedBox(
               height: 4.0,
@@ -26,7 +27,7 @@ class TimeLabel extends StatelessWidget {
                 child: Container(
                   margin: EdgeInsetsDirectional.only(start: 10.0, end: 10.0),
                   height: 2.0,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).accentColor,
                 ),
               ))
         ],
@@ -39,7 +40,7 @@ class TimeLabel extends StatelessWidget {
   Row _buildTimeRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
+      crossAxisAlignment: CrossAxisAlignment.center,
       textBaseline: TextBaseline.alphabetic,
       children: <Widget>[
         TimeSegment(_duration.inMinutes.truncate().toString(), 'm'),
@@ -48,7 +49,11 @@ class TimeLabel extends StatelessWidget {
     );
   }
 
-  IconButton _buildIconButton(BuildContext context) {
-    return IconButton(icon: Icon(Icons.backspace), onPressed: () => _deleteDigit());
+  FlatButton _buildIconButton(BuildContext context) {
+    return FlatButton(
+      shape: CircleBorder(),
+      child: Icon(Icons.backspace),
+      onPressed: () => _deleteDigit(),
+    );
   }
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:interval_timer/interval_player/timer_painter.dart';
 import 'package:interval_timer/text_input/time_label.dart';
@@ -15,17 +14,18 @@ enum DurationState { warmUp, work, pause }
 class IntervalPlayerPage extends StatefulWidget {
   final Duration _workDuration;
   final Duration _pauseDuration;
-  final int _cycles;
+  final int _cycleLimit;
 
-  IntervalPlayerPage(this._cycles, this._workDuration, this._pauseDuration);
+  IntervalPlayerPage(this._cycleLimit, this._workDuration, this._pauseDuration);
 
   @override
   State<StatefulWidget> createState() {
-    return IntervalPlayerPageState(this._cycles, this._workDuration, this._pauseDuration);
+    return IntervalPlayerPageState();
   }
 }
 
-class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProviderStateMixin {
+class IntervalPlayerPageState extends State<IntervalPlayerPage>
+    with TickerProviderStateMixin {
   AnimationController controller;
 
   DurationState _durationState = DurationState.warmUp;
@@ -49,37 +49,32 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
   }
 
   Duration _getReadyDuration = Duration(seconds: 5);
-  Duration _workDuration;
-  Duration _pauseDuration;
-  final int _cycleLimit;
   int _cycleCount = 0;
-
-  IntervalPlayerPageState(this._cycleLimit, this._workDuration, this._pauseDuration);
 
   @override
   void initState() {
     _loadFile();
-
-    controller = AnimationController(vsync: this, duration: _getReadyDuration, value: 1.0);
-
+    controller =
+        AnimationController(vsync: this, duration: _getReadyDuration, value: 0);
     controller.addListener(_stateChange);
 
     super.initState();
   }
 
   void _stateChange() {
-    if (controller.value == 0 && _cycleCount < _cycleLimit) {
+    print(controller.value);
+    if (controller.value == 0 && _cycleCount < widget._cycleLimit) {
       switch (_durationState) {
         case DurationState.warmUp:
           audioPlayer.play(_workFilePath, isLocal: true);
           _durationState = DurationState.work;
-          controller.duration = _workDuration;
+          controller.duration = widget._workDuration;
           _cycleCount++;
           break;
         case DurationState.work:
           audioPlayer.play(_pauseFilePath, isLocal: true);
           _durationState = DurationState.pause;
-          controller.duration = _pauseDuration;
+          controller.duration = widget._pauseDuration;
           break;
         case DurationState.pause:
           audioPlayer.play(_workFilePath, isLocal: true);
@@ -103,8 +98,10 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
 
     final lvlUpBuffer = lvlUpBytes.buffer;
     final nowGoBuffer = nowGoBytes.buffer;
-    await lvlUpFile.writeAsBytes(lvlUpBuffer.asUint8List(lvlUpBytes.offsetInBytes, lvlUpBytes.lengthInBytes));
-    await nowGoFile.writeAsBytes(nowGoBuffer.asUint8List(nowGoBytes.offsetInBytes, nowGoBytes.lengthInBytes));
+    await lvlUpFile.writeAsBytes(lvlUpBuffer.asUint8List(
+        lvlUpBytes.offsetInBytes, lvlUpBytes.lengthInBytes));
+    await nowGoFile.writeAsBytes(nowGoBuffer.asUint8List(
+        nowGoBytes.offsetInBytes, nowGoBytes.lengthInBytes));
 
     if (await lvlUpFile.exists() && await nowGoFile.exists()) {
       _pauseFilePath = lvlUpFile.path;
@@ -119,21 +116,40 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
     ThemeData themeData = Theme.of(context);
 
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            buildTimer(themeData),
-            AnimatedBuilder(
-                animation: controller,
-                builder: (BuildContext context, Widget child) {
-                  return Container(
-                    margin: EdgeInsets.all(8.0),
-                    child: buildButtons(),
-                  );
-                })
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: AnimatedBuilder(
+                  animation: controller,
+                  builder: (_, __) => Row(
+                    verticalDirection: VerticalDirection.down,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _durationTitle,
+                        style: themeData.textTheme.display1,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 6,
+                child: buildTimer(themeData),
+              ),
+              Expanded(
+                flex: 2,
+                child: AnimatedBuilder(
+                  animation: controller,
+                  builder: (_, __) => buildButtons(),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -141,70 +157,77 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
 
   Widget buildButtons() {
     if (controller.isAnimating) {
-      return FloatingActionButton(
-        heroTag: 10,
-        child: Icon(Icons.pause),
-        onPressed: () {
-          setState(() => controller.stop());
-        },
+      return FlatButton(
+        shape: CircleBorder(),
+        onPressed: () => setState(() => controller.stop()),
+        child: Icon(
+          Icons.pause,
+          size: 50,
+        ),
       );
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          FloatingActionButton(
-            heroTag: 11,
-            child: Icon(Icons.stop),
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => WorkTimeInputPage(_workDuration, _pauseDuration)),
-                      (Route<dynamic> route) => false);
-            },
+          FlatButton(
+            shape: CircleBorder(),
+            onPressed: () => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WorkTimeInputPage(
+                      widget._workDuration, widget._pauseDuration),
+                ),
+                (_) => false),
+            child: Icon(
+              Icons.stop,
+              size: 50,
+            ),
           ),
-          FloatingActionButton(
-            heroTag: 10,
-            child: Icon(Icons.play_arrow),
-            onPressed: () {
-              controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
-            },
-          )
+          FlatButton(
+            shape: CircleBorder(),
+            onPressed: () => controller.reverse(
+                from: controller.value == 0.0 ? 1.0 : controller.value),
+            child: Icon(
+              Icons.play_arrow,
+              size: 50,
+            ),
+          ),
         ],
       );
     }
   }
 
-  Expanded buildTimer(ThemeData themeData) {
-    return Expanded(
-      child: Align(
-        alignment: FractionalOffset.center,
-        child: AspectRatio(
-          aspectRatio: 1.0,
-          child: Stack(
-            children: <Widget>[
-              Positioned.fill(
-                child: AnimatedBuilder(
+  Align buildTimer(ThemeData themeData) {
+    return Align(
+      alignment: FractionalOffset.center,
+      child: AspectRatio(
+        aspectRatio: 1.0,
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: AnimatedBuilder(
+                animation: controller,
+                builder: (BuildContext context, Widget child) {
+                  return new CustomPaint(
+                    painter: TimerPainter(
+                      animation: controller,
+                      backgroundColor: Colors.white,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Align(
+              alignment: FractionalOffset.center,
+              child: AnimatedBuilder(
                   animation: controller,
                   builder: (BuildContext context, Widget child) {
-                    return new CustomPaint(
-                        painter: TimerPainter(
-                          animation: controller,
-                          backgroundColor: Colors.white,
-                          color: Colors.deepOrangeAccent,
-                        ));
-                  },
-                ),
-              ),
-              Align(
-                alignment: FractionalOffset.center,
-                child: AnimatedBuilder(
-                    animation: controller,
-                    builder: (BuildContext context, Widget child) {
-                      return buildTimeInfo(themeData);
-                    }),
-              ),
-            ],
-          ),
+                    return buildTimeInfo(themeData);
+                  }),
+            ),
+          ],
         ),
       ),
     );
@@ -215,19 +238,16 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(_durationTitle, style: themeData.textTheme.display1),
-          TimeLabel(controller.duration * controller.value)
-        ],
+        children: <Widget>[TimeLabel(controller.duration * controller.value)],
       );
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(_durationTitle, style: themeData.textTheme.display1),
-          Text('Cycle: $_cycleCount/$_cycleLimit', style: themeData.textTheme.body1),
-          TimeLabel(controller.duration * controller.value)
+          TimeLabel(controller.duration * controller.value),
+          Text('Round $_cycleCount of ${widget._cycleLimit}',
+              style: themeData.textTheme.display1),
         ],
       );
     }
