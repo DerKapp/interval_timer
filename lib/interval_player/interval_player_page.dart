@@ -198,6 +198,20 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
           size: 50,
         ),
       );
+    } else if (_durationState == DurationState.finished) {
+      return FlatButton(
+        shape: CircleBorder(),
+        onPressed: () => Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WorkTimeInputPage(),
+            ),
+            (_) => false),
+        child: Icon(
+          Icons.home,
+          size: 50,
+        ),
+      );
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -243,7 +257,8 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
                   return new CustomPaint(
                     painter: TimerPainter(
                       animation: controller,
-                      backgroundColor: themeData.primaryColor,
+                      backgroundColor:
+                          _durationState == DurationState.work ? themeData.canvasColor : themeData.accentColor,
                       color: _durationState == DurationState.work ? themeData.accentColor : themeData.canvasColor,
                     ),
                   );
@@ -264,22 +279,28 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
     );
   }
 
-  Column buildTimeInfo(ThemeData themeData) {
-    if (_durationState == DurationState.warmUp) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[TimeLabel(controller.duration * controller.value)],
-      );
-    } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          TimeLabel(controller.duration * controller.value),
-          Text('Round $_roundCount of ${_timeBloc.rounds.value}', style: themeData.textTheme.display1),
-        ],
-      );
+  Widget buildTimeInfo(ThemeData themeData) {
+    switch (_durationState) {
+      case DurationState.warmUp:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[TimeLabel(controller.duration * controller.value)],
+        );
+      case DurationState.work:
+      case DurationState.pause:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            TimeLabel(controller.duration * controller.value),
+            Text('Round $_roundCount of ${_timeBloc.rounds.value}', style: themeData.textTheme.display1),
+          ],
+        );
+      case DurationState.finished:
+        return Image.asset('assets/celebration.png');
+      default:
+        throw Exception('Unhandled duration state');
     }
   }
 }
