@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/text_input/num_pad.dart';
+import 'package:interval_timer/shared/num_pad.dart';
 
 typedef void OnDoneClick();
 typedef void SetNumber(int number);

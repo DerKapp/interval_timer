@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:interval_timer/bloc/bloc.dart';
+import 'package:interval_timer/shared/bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TimeBloc implements Bloc {

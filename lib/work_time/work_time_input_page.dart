@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/bloc/bloc_provider.dart';
-import 'package:interval_timer/bloc/time_bloc.dart';
-import 'package:interval_timer/text_input/pause_time_input_page.dart';
-import 'package:interval_timer/text_input/time_input.dart';
+import 'package:interval_timer/shared/bloc_provider.dart';
+import 'package:interval_timer/core/time_bloc.dart';
+import 'package:interval_timer/pause_time/pause_time_input_page.dart';
+import 'package:interval_timer/shared/time_input.dart';
 
 class WorkTimeInputPage extends StatelessWidget {
   @override
@@ -20,7 +20,7 @@ class WorkTimeInputPage extends StatelessWidget {
               flex: 1,
               child: Center(
                 child: Text(
-                  'Set Workout Duration',
+                  'Set Work Duration',
                   style: Theme.of(context).textTheme.title,
                 ),
               ),

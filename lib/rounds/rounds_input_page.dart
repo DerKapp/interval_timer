@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/bloc/bloc_provider.dart';
-import 'package:interval_timer/bloc/time_bloc.dart';
-import 'package:interval_timer/text_input/rounds_input_page.dart';
-import 'package:interval_timer/text_input/time_input.dart';
+import 'package:interval_timer/shared/bloc_provider.dart';
+import 'package:interval_timer/core/time_bloc.dart';
+import 'package:interval_timer/interval_player/interval_player_page.dart';
+import 'package:interval_timer/shared/number_input.dart';
 
-class PauseTimeInputPage extends StatelessWidget {
+class RoundsInputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('build -> pause time input page');
+    print('build -> rounds input page');
     TimeBloc timeBloc = BlocProvider.of<TimeBloc>(context);
 
     return Scaffold(
@@ -19,14 +19,14 @@ class PauseTimeInputPage extends StatelessWidget {
               flex: 1,
               child: Center(
                 child: Text(
-                  'Set Rest Duration',
+                  'Set Cycle Amount',
                   style: Theme.of(context).textTheme.title,
                 ),
               ),
             ),
             Expanded(
               flex: 4,
-              child: TimeInput(timeBloc.setPauseTime, timeBloc.pauseTime.value),
+              child: NumberInput(timeBloc.rounds.value, timeBloc.setRounds),
             ),
             Expanded(
               flex: 1,
@@ -44,11 +44,12 @@ class PauseTimeInputPage extends StatelessWidget {
                   ),
                   FlatButton(
                     shape: CircleBorder(),
-                    onPressed: () => Navigator.push(
+                    onPressed: () => Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => RoundsInputPage(),
+                        builder: (context) => IntervalPlayerPage(),
                       ),
+                      (_) => false,
                     ),
                     child: Icon(
                       Icons.done,

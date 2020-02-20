@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/text_input/num_pad.dart';
-import 'package:interval_timer/text_input/time_label.dart';
+import 'package:interval_timer/shared/num_pad.dart';
+import 'package:interval_timer/shared/time_label.dart';
 
 typedef void SetDuration(Duration d);
 typedef void OnDoneClick();

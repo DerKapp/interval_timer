@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/bloc/bloc_provider.dart';
-import 'package:interval_timer/text_input/work_time_input_page.dart';
-
-import 'bloc/time_bloc.dart';
+import 'package:interval_timer/core/time_bloc.dart';
+import 'package:interval_timer/shared/bloc_provider.dart';
+import 'package:interval_timer/work_time/work_time_input_page.dart';
 
 class MyApp extends StatelessWidget {
   @override

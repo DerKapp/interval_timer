@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/bloc/bloc_provider.dart';
-import 'package:interval_timer/bloc/time_bloc.dart';
-import 'package:interval_timer/interval_player/interval_player_page.dart';
-import 'package:interval_timer/text_input/number_input.dart';
+import 'package:interval_timer/shared/bloc_provider.dart';
+import 'package:interval_timer/core/time_bloc.dart';
+import 'package:interval_timer/rounds/rounds_input_page.dart';
+import 'package:interval_timer/shared/time_input.dart';
 
-class RoundsInputPage extends StatelessWidget {
+class PauseTimeInputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('build -> rounds input page');
+    print('build -> pause time input page');
     TimeBloc timeBloc = BlocProvider.of<TimeBloc>(context);
 
     return Scaffold(
@@ -19,14 +19,14 @@ class RoundsInputPage extends StatelessWidget {
               flex: 1,
               child: Center(
                 child: Text(
-                  'Set Cycle Amount',
+                  'Set Rest Duration',
                   style: Theme.of(context).textTheme.title,
                 ),
               ),
             ),
             Expanded(
               flex: 4,
-              child: NumberInput(timeBloc.rounds.value, timeBloc.setRounds),
+              child: TimeInput(timeBloc.setPauseTime, timeBloc.pauseTime.value),
             ),
             Expanded(
               flex: 1,
@@ -44,12 +44,11 @@ class RoundsInputPage extends StatelessWidget {
                   ),
                   FlatButton(
                     shape: CircleBorder(),
-                    onPressed: () => Navigator.pushAndRemoveUntil(
+                    onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => IntervalPlayerPage(),
+                        builder: (_) => RoundsInputPage(),
                       ),
-                      (_) => false,
                     ),
                     child: Icon(
                       Icons.done,

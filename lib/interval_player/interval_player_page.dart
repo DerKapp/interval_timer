@@ -4,11 +4,12 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:interval_timer/bloc/bloc_provider.dart';
-import 'package:interval_timer/bloc/time_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:interval_timer/shared/bloc_provider.dart';
+import 'package:interval_timer/core/time_bloc.dart';
 import 'package:interval_timer/interval_player/timer_painter.dart';
-import 'package:interval_timer/text_input/time_label.dart';
-import 'package:interval_timer/text_input/work_time_input_page.dart';
+import 'package:interval_timer/shared/time_label.dart';
+import 'package:interval_timer/work_time/work_time_input_page.dart';
 import 'package:path_provider/path_provider.dart';
 
 enum DurationState { warmUp, work, pause, finished }
@@ -254,12 +255,33 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
               child: AnimatedBuilder(
                 animation: controller,
                 builder: (BuildContext context, Widget child) {
-                  return new CustomPaint(
+                  var backgroundColor;
+                  var frontColor;
+
+                  switch (_durationState) {
+                    case DurationState.warmUp:
+                      backgroundColor = themeData.primaryColor;
+                      frontColor = themeData.canvasColor;
+                      break;
+                    case DurationState.work:
+                      backgroundColor = themeData.canvasColor;
+                      frontColor = themeData.accentColor;
+                      break;
+                    case DurationState.pause:
+                      backgroundColor = themeData.accentColor;
+                      frontColor = themeData.canvasColor;
+                      break;
+                    case DurationState.finished:
+                      backgroundColor = Colors.transparent;
+                      frontColor = Colors.transparent;
+                      break;
+                  }
+
+                  return CustomPaint(
                     painter: TimerPainter(
                       animation: controller,
-                      backgroundColor:
-                          _durationState == DurationState.work ? themeData.canvasColor : themeData.accentColor,
-                      color: _durationState == DurationState.work ? themeData.accentColor : themeData.canvasColor,
+                      backgroundColor: backgroundColor,
+                      color: frontColor,
                     ),
                   );
                 },
@@ -298,7 +320,10 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
           ],
         );
       case DurationState.finished:
-        return Image.asset('assets/celebration.png');
+        return SvgPicture.asset(
+          'assets/celebration.svg',
+          semanticsLabel: 'cel',
+        );
       default:
         throw Exception('Unhandled duration state');
     }

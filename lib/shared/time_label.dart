@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interval_timer/text_input/time_segment.dart';
+import 'package:interval_timer/shared/time_segment.dart';
 
 typedef void DeleteDigit();
 

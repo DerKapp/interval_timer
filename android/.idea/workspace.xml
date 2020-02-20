@@ -7,9 +7,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c5203fe-cbec-4a6d-a131-e2f4cfac22b9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../lib/bloc/bloc.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lib/bloc/bloc_provider.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lib/bloc/time_bloc.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/key.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../assets/celebration.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/bloc/bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/bloc.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/bloc/bloc_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/bloc_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/bloc/time_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/core/time_bloc.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/interval_player/interval_player_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/interval_player/interval_player_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/my_app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/my_app.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/num_pad.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/num_pad.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/number_input.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/number_input.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/pause_time_input_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/pause_time/pause_time_input_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/rounds_input_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/rounds/rounds_input_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/time_input.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/time_input.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/time_label.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/time_label.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/time_segment.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/shared/time_segment.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/text_input/work_time_input_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/work_time/work_time_input_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +50,17 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/launch_background.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" selection-start-line="15" selection-end-line="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -281,9 +307,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.32960597" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.32960597" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -305,7 +332,7 @@
       <window_info anchor="right" id="Gradle" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
-      <window_info anchor="right" id="Preview" order="5" weight="0.32960597" />
+      <window_info active="true" anchor="right" id="Preview" order="5" visible="true" weight="0.32960597" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
