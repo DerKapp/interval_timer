@@ -22,7 +22,7 @@ class NumberInputState extends State<NumberInput> {
     if (orientation == Orientation.portrait) {
       return Column(
         children: <Widget>[
-          Expanded(flex: 2, child: buildCycleLabel(context)),
+          Expanded(flex: 2, child: buildRoundsLabel(context)),
           Expanded(flex: 1, child: SizedBox()),
           Expanded(flex: 6, child: NumPad(_numPadClick)),
         ],
@@ -51,7 +51,7 @@ class NumberInputState extends State<NumberInput> {
     }
   }
 
-  Column buildCycleLabel(BuildContext context) {
+  Column buildRoundsLabel(BuildContext context) {
     return Column(
       children: <Widget>[
         Expanded(child: Center(child: Text(widget._number.toString(), style: Theme.of(context).textTheme.display3))),

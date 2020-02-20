@@ -19,7 +19,7 @@ class RoundsInputPage extends StatelessWidget {
               flex: 1,
               child: Center(
                 child: Text(
-                  'Set Cycle Amount',
+                  'Set Rounds',
                   style: Theme.of(context).textTheme.title,
                 ),
               ),
