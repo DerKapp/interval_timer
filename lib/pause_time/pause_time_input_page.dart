@@ -3,6 +3,7 @@ import 'package:interval_timer/shared/bloc_provider.dart';
 import 'package:interval_timer/core/time_bloc.dart';
 import 'package:interval_timer/rounds/rounds_input_page.dart';
 import 'package:interval_timer/shared/time_input.dart';
+import 'package:interval_timer/shared/time_input_bloc.dart';
 
 class PauseTimeInputPage extends StatelessWidget {
   @override
@@ -26,7 +27,11 @@ class PauseTimeInputPage extends StatelessWidget {
             ),
             Expanded(
               flex: 4,
-              child: TimeInput(timeBloc.setPauseTime, timeBloc.pauseTime.value),
+              child: BlocProvider<TimeInputBloc>(
+                bloc: TimeInputBloc(timeBloc.pauseTime.value)
+                  ..timeStream.listen((newPauseTime) => timeBloc.setPauseTime(newPauseTime)),
+                child: TimeInput(),
+              ),
             ),
             Expanded(
               flex: 1,

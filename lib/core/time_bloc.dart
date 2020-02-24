@@ -15,10 +15,12 @@ class TimeBloc implements Bloc {
   ValueStream<int> get rounds => _roundsController.stream;
 
   void setWorkTime(Duration workTime) {
+    print('workTime: $workTime');
     _workTimeController.add(workTime);
   }
 
   void setPauseTime(Duration pauseTime) {
+    print('pauseTime: $pauseTime');
     _pauseTimeController.add(pauseTime);
   }
 

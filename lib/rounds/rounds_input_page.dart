@@ -3,6 +3,7 @@ import 'package:interval_timer/shared/bloc_provider.dart';
 import 'package:interval_timer/core/time_bloc.dart';
 import 'package:interval_timer/interval_player/interval_player_page.dart';
 import 'package:interval_timer/shared/number_input.dart';
+import 'package:interval_timer/shared/number_input_bloc.dart';
 
 class RoundsInputPage extends StatelessWidget {
   @override
@@ -26,7 +27,11 @@ class RoundsInputPage extends StatelessWidget {
             ),
             Expanded(
               flex: 4,
-              child: NumberInput(timeBloc.rounds.value, timeBloc.setRounds),
+              child: BlocProvider<NumberInputBloc>(
+                bloc: NumberInputBloc(timeBloc.rounds.value)
+                  ..numberStream.listen((newRounds) => timeBloc.setRounds(newRounds)),
+                child: NumberInput(),
+              ),
             ),
             Expanded(
               flex: 1,
@@ -47,7 +52,7 @@ class RoundsInputPage extends StatelessWidget {
                     onPressed: () => Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => IntervalPlayerPage(),
+                        builder: (_) => IntervalPlayerPage(),
                       ),
                       (_) => false,
                     ),

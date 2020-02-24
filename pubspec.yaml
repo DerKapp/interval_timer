@@ -28,5 +28,4 @@ flutter:
   assets:
     - assets/sound/pause.mp3
     - assets/sound/work.mp3
-    - assets/celebration.png
     - assets/celebration.svg

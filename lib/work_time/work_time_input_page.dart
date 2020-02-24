@@ -3,6 +3,7 @@ import 'package:interval_timer/shared/bloc_provider.dart';
 import 'package:interval_timer/core/time_bloc.dart';
 import 'package:interval_timer/pause_time/pause_time_input_page.dart';
 import 'package:interval_timer/shared/time_input.dart';
+import 'package:interval_timer/shared/time_input_bloc.dart';
 
 class WorkTimeInputPage extends StatelessWidget {
   @override
@@ -10,7 +11,6 @@ class WorkTimeInputPage extends StatelessWidget {
     print('build -> work time input page');
     TimeBloc timeBloc = BlocProvider.of<TimeBloc>(context);
 
-    timeBloc.workTime.value;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -27,7 +27,11 @@ class WorkTimeInputPage extends StatelessWidget {
             ),
             Expanded(
               flex: 4,
-              child: TimeInput(timeBloc.setWorkTime, timeBloc.workTime.value),
+              child: BlocProvider<TimeInputBloc>(
+                bloc: TimeInputBloc(timeBloc.workTime.value)
+                  ..timeStream.listen((newWorkTime) => timeBloc.setWorkTime(newWorkTime)),
+                child: TimeInput(),
+              ),
             ),
             Expanded(
               flex: 1,

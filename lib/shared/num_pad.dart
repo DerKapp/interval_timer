@@ -1,12 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-typedef void ClickNumber(int number);
-typedef void OnDoneClick();
-
 class NumPad extends StatelessWidget {
-  final ClickNumber _clickNumber;
+  final StreamSink<num> _streamSink;
 
-  NumPad(this._clickNumber);
+  NumPad(this._streamSink);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class NumPad extends StatelessWidget {
   FlatButton buildNumButton(BuildContext context, int number) {
     return FlatButton(
       shape: CircleBorder(),
-      onPressed: () => _clickNumber(number),
+      onPressed: () => _streamSink.add(number),
       child: Text(
         number.toString(),
         style: Theme.of(context).textTheme.display1,
