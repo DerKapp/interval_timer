@@ -4,15 +4,20 @@ import 'package:interval_timer/shared/bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TimeInputBloc extends Bloc {
-  final BehaviorSubject<Duration> _timeController;
   final StreamController<num> _numberController = StreamController();
-  StreamSubscription _subscription;
+  StreamSubscription _numberSub;
 
-  TimeInputBloc([Duration initialTime = const Duration()])
-      : _timeController = BehaviorSubject<Duration>.seeded(initialTime) {
-    _subscription = _numberController.stream.listen((number) {
-      double seconds = (_timeController.value.inSeconds % 60).truncateToDouble();
-      double minutes = _timeController.value.inMinutes.truncateToDouble();
+  ValueStream<Duration> timeStream;
+  StreamSink<Duration> timeSink;
+
+  StreamSink<num> get numberSink => _numberController.sink;
+
+  TimeInputBloc(StreamSink _timeSink, ValueStream<Duration> _timeStream)
+      : timeStream = _timeStream,
+        timeSink = _timeSink {
+    _numberSub = _numberController.stream.listen((number) {
+      double seconds = (timeStream.value.inSeconds % 60).truncateToDouble();
+      double minutes = timeStream.value.inMinutes.truncateToDouble();
 
       seconds = seconds * 10;
       seconds = seconds + number;
@@ -21,19 +26,13 @@ class TimeInputBloc extends Bloc {
       seconds = seconds % 100;
       minutes = minutes % 100;
 
-      _timeController.add(Duration(minutes: minutes.toInt(), seconds: seconds.toInt()));
+      timeSink.add(Duration(minutes: minutes.toInt(), seconds: seconds.toInt()));
     });
   }
 
-  ValueStream<Duration> get timeStream => _timeController.stream;
-
-  StreamSink<Duration> get timeSink => _timeController.sink;
-
-  StreamSink<num> get numberSink => _numberController.sink;
-
   void deleteNumber() {
-    double seconds = (_timeController.value.inSeconds % 60).truncateToDouble();
-    double minutes = _timeController.value.inMinutes.truncateToDouble();
+    double seconds = (timeStream.value.inSeconds % 60).truncateToDouble();
+    double minutes = timeStream.value.inMinutes.truncateToDouble();
 
     seconds = seconds / 10;
     seconds = seconds + (minutes % 10) * 10;
@@ -41,13 +40,12 @@ class TimeInputBloc extends Bloc {
     minutes = minutes / 10;
     minutes = minutes.truncateToDouble();
 
-    _timeController.add(Duration(minutes: minutes.toInt(), seconds: seconds.toInt()));
+    timeSink.add(Duration(minutes: minutes.toInt(), seconds: seconds.toInt()));
   }
 
   @override
   void dispose() {
-    _timeController.close();
     _numberController.close();
-    _subscription.cancel();
+    _numberSub.cancel();
   }
 }

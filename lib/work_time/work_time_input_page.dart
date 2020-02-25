@@ -28,8 +28,7 @@ class WorkTimeInputPage extends StatelessWidget {
             Expanded(
               flex: 4,
               child: BlocProvider<TimeInputBloc>(
-                bloc: TimeInputBloc(timeBloc.workTime.value)
-                  ..timeStream.listen((newWorkTime) => timeBloc.setWorkTime(newWorkTime)),
+                bloc: TimeInputBloc(timeBloc.workTimeSink, timeBloc.workTimeStream),
                 child: TimeInput(),
               ),
             ),

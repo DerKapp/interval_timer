@@ -28,8 +28,7 @@ class PauseTimeInputPage extends StatelessWidget {
             Expanded(
               flex: 4,
               child: BlocProvider<TimeInputBloc>(
-                bloc: TimeInputBloc(timeBloc.pauseTime.value)
-                  ..timeStream.listen((newPauseTime) => timeBloc.setPauseTime(newPauseTime)),
+                bloc: TimeInputBloc(timeBloc.pauseTimeSink, timeBloc.pauseTimeStream),
                 child: TimeInput(),
               ),
             ),

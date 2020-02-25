@@ -60,30 +60,30 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
   }
 
   void _stateChange() {
-    if (controller.value == 0 && _roundCount < _timeBloc.rounds.value) {
+    if (controller.value == 0 && _roundCount < _timeBloc.roundStream.value) {
       switch (_durationState) {
         case DurationState.warmUp:
           audioPlayer.play(_workFilePath, isLocal: true);
           _durationState = DurationState.work;
-          controller.duration = _timeBloc.workTime.value;
+          controller.duration = _timeBloc.workTimeStream.value;
           _roundCount++;
           break;
         case DurationState.work:
           audioPlayer.play(_pauseFilePath, isLocal: true);
           _durationState = DurationState.pause;
-          controller.duration = _timeBloc.pauseTime.value;
+          controller.duration = _timeBloc.pauseTimeStream.value;
           break;
         case DurationState.pause:
           audioPlayer.play(_workFilePath, isLocal: true);
           _durationState = DurationState.work;
-          controller.duration = _timeBloc.workTime.value;
+          controller.duration = _timeBloc.workTimeStream.value;
           _roundCount++;
           break;
         default:
       }
 
       controller.reverse(from: 1.0);
-    } else if (controller.value == 0 && _roundCount == _timeBloc.rounds.value) {
+    } else if (controller.value == 0 && _roundCount == _timeBloc.roundStream.value) {
       _durationState = DurationState.finished;
     }
   }
@@ -316,7 +316,7 @@ class IntervalPlayerPageState extends State<IntervalPlayerPage> with TickerProvi
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             TimeLabel(controller.duration * controller.value),
-            Text('Round $_roundCount of ${_timeBloc.rounds.value}', style: themeData.textTheme.display1),
+            Text('Round $_roundCount of ${_timeBloc.roundStream.value}', style: themeData.textTheme.display1),
           ],
         );
       case DurationState.finished:

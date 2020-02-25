@@ -3,9 +3,6 @@ import 'package:interval_timer/shared/bloc_provider.dart';
 import 'package:interval_timer/shared/num_pad.dart';
 import 'package:interval_timer/shared/number_input_bloc.dart';
 
-typedef void OnDoneClick();
-typedef void SetNumber(int number);
-
 class NumberInput extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => NumberInputState();

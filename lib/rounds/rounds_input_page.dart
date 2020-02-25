@@ -28,8 +28,7 @@ class RoundsInputPage extends StatelessWidget {
             Expanded(
               flex: 4,
               child: BlocProvider<NumberInputBloc>(
-                bloc: NumberInputBloc(timeBloc.rounds.value)
-                  ..numberStream.listen((newRounds) => timeBloc.setRounds(newRounds)),
+                bloc: NumberInputBloc(timeBloc.roundStream, timeBloc.roundSink),
                 child: NumberInput(),
               ),
             ),
